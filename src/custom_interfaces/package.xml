@@ -1,0 +1,11 @@
+<package format="2">
+  <name>custom_interfaces</name>
+  <version>0.0.1</version>
+  <description>Custom message types for cross-distro communication.</description>
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>std_msgs</build_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <member_of>ros2_ws_wsl2_RasPI</member_of>
+</package>

@@ -1,0 +1,16 @@
+# Parameters for the ROS2 nodes
+pc_publisher:
+  ros__parameters:
+    qos_profile:
+      history: keep_last
+      depth: 10
+      reliability: reliable
+      durability: transient_local
+
+pi_subscriber:
+  ros__parameters:
+    qos_profile:
+      history: keep_last
+      depth: 10
+      reliability: reliable
+      durability: transient_local
