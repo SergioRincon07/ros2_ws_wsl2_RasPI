@@ -293,6 +293,9 @@ rm -rf build install log
 colcon build --packages-select custom_interfaces
 source install/setup.bash
 colcon build --packages-select cross_distro_demo
+
+cd /home/sergio/ros2_ws/ros2_ws_wsl2_RasPI && rm -rf build/ install/ log/
+
 ```
 
 ### Mensaje personalizado no encontrado:
