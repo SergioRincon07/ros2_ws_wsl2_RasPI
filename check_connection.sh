@@ -7,6 +7,15 @@ echo "  Diagnóstico de Comunicación ROS2"
 echo "=========================================="
 echo ""
 
+# 0. Setup_cyclonedds ROS2
+if [ -f "$HOME/ros2_ws/ros2_ws_wsl2_RasPI/setup_cyclonedds.sh" ]; then
+    source "$HOME/ros2_ws/ros2_ws_wsl2_RasPI/setup_cyclonedds.sh"
+    echo "   ✓ Configuración CycloneDDS cargada"
+else
+    echo "   ⚠️  No se encontró setup_cyclonedds.sh"
+fi
+echo ""
+
 # 1. Configuración ROS2
 echo "1️⃣  Configuración ROS2:"
 echo "   ROS_DISTRO: ${ROS_DISTRO:-'No configurado'}"
