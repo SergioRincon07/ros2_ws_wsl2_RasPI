@@ -19,8 +19,8 @@ fi
 # Dominio ROS2 (debe ser el mismo en todos los dispositivos)
 export ROS_DOMAIN_ID=10
 
-# Localhost only OFF para permitir comunicación en red
-export ROS_LOCALHOST_ONLY=0
+# Configuración de descubrimiento automático (reemplaza ROS_LOCALHOST_ONLY)
+export ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
 
 # Opcional: para debugging de descubrimiento DDS
 # Descomentar la siguiente línea para habilitar trazas detalladas
@@ -32,7 +32,7 @@ echo "=========================================="
 echo "  RMW: $RMW_IMPLEMENTATION"
 echo "  Dominio: $ROS_DOMAIN_ID"
 echo "  Config: ${CYCLONEDDS_URI:-'default'}"
-echo "  Localhost only: $ROS_LOCALHOST_ONLY"
+echo "  Discovery range: $ROS_AUTOMATIC_DISCOVERY_RANGE"
 echo "=========================================="
 echo ""
 echo "✓ Listo para comunicación multi-dispositivo"
