@@ -21,9 +21,13 @@ class Talker(Node):
 def main():
     rclpy.init()
     node = Talker()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Talker detenido por Ctrl+C')
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':

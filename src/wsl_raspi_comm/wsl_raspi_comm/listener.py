@@ -19,9 +19,13 @@ class Listener(Node):
 def main():
     rclpy.init()
     node = Listener()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Listener detenido por Ctrl+C')
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':

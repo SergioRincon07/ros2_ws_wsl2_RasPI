@@ -5,7 +5,7 @@
             <Interfaces>
                 <!-- Configuración adaptada para WSL2 -->
                 <!-- eth0 es la interfaz principal en WSL2 -->
-                <NetworkInterface name="eth0" priority="default" multicast="default" />
+                <NetworkInterface name="eth2" priority="default" multicast="default" />
             </Interfaces>
             
             <!-- Configuración para comunicación entre dispositivos -->
