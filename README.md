@@ -89,14 +89,15 @@ source ~/ros2_ws/ros2_ws_wsl2_RasPI/install/setup.bash
 echo "source ~/ros2_ws/ros2_ws_wsl2_RasPI/install/setup.bash" >> ~/.bashrc
 ```
 
-## Configuración para WSL2
+## Configuración de CycloneDDS
 
-### Problema conocido con CycloneDDS en WSL2
+Este proyecto utiliza **CycloneDDS** como middleware para comunicación multi-dispositivo optimizada.
 
-En WSL2, CycloneDDS puede tener problemas con las interfaces de red. La solución es usar FastRTPS:
+### Configuración Rápida
 
 ```bash
-export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+# Cargar configuración de CycloneDDS
+source setup_cyclonedds.sh
 ```
 
 **Configuración permanente** (agregar al `~/.bashrc`):
@@ -234,7 +235,7 @@ colcon build
 source install/setup.bash
 ```
 
-### Error: CycloneDDS no puede crear nodo en WSL2
+### Error: Problemas de interfaz de red
 
 **Síntoma**: 
 ```
@@ -242,10 +243,23 @@ source install/setup.bash
 eth2: does not match an available interface
 ```
 
-**Solución**: Usar FastRTPS en lugar de CycloneDDS:
+**Solución**: El archivo de configuración `config/cyclonedds.xml` ya está optimizado para WSL2. Si el problema persiste:
+
+1. Verifica tus interfaces de red:
 ```bash
-export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-ros2 run wsl_raspi_comm talker
+ip addr show
+```
+
+2. Edita `config/cyclonedds.xml` y ajusta las interfaces según tu sistema:
+```xml
+<Interfaces>
+    <NetworkInterface name="TU_INTERFAZ" priority="10" />
+</Interfaces>
+```
+
+3. Aumenta la verbosidad para debugging:
+```xml
+<Verbosity>info</Verbosity>
 ```
 
 ### El listener no recibe mensajes
@@ -346,11 +360,182 @@ rosdep check wsl_raspi_comm
 
 1. **__init__.py es obligatorio**: Los paquetes Python en ROS2 requieren un archivo `__init__.py` en el directorio del módulo.
 
-2. **FastRTPS en WSL2**: Se recomienda usar FastRTPS en lugar de CycloneDDS en WSL2 debido a problemas de compatibilidad con las interfaces de red virtuales.
+2. **CycloneDDS**: Este proyecto usa CycloneDDS para comunicación multi-dispositivo optimizada. La configuración está en `config/cyclonedds.xml`.
 
-3. **Sincronización de tiempo**: Para comunicación multi-máquina, asegurar que los relojes estén sincronizados (usar NTP).
+3. **Mismo dominio ROS**: Asegurar que `ROS_DOMAIN_ID` sea el mismo en todos los dispositivos (configurado a 10 por defecto).
 
-4. **Network discovery**: ROS2 usa multicast UDP para descubrimiento de nodos. Asegurar que la red lo permita.
+4. **Sincronización de tiempo**: Para comunicación multi-máquina, asegurar que los relojes estén sincronizados (usar NTP).
+
+5. **Network discovery**: ROS2 usa multicast UDP para descubrimiento de nodos. Asegurar que la red lo permita.
+
+## Scripts de Automatización
+
+El proyecto incluye varios scripts para facilitar la configuración y gestión del workspace:
+
+### Scripts Disponibles
+
+#### `setup_rmw.sh` - Configurar Middleware
+Configura CycloneDDS como middleware:
+
+```bash
+# Configurar CycloneDDS (predeterminado)
+source setup_rmw.sh cyclonedds
+
+# O simplemente:
+source setup_rmw.sh
+
+# Mostrar configuración actual
+source setup_rmw.sh show
+
+# Ver ayuda
+source setup_rmw.sh help
+```
+
+#### `setup_cyclonedds.sh` - Configurar CycloneDDS
+Configura todas las variables de entorno necesarias para usar CycloneDDS:
+
+```bash
+source setup_cyclonedds.sh
+```
+
+Este script configura:
+- `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`
+- `CYCLONEDDS_URI` (apunta al archivo de configuración XML)
+- `ROS_DOMAIN_ID=10`
+- `ROS_LOCALHOST_ONLY=0`
+
+#### `check_connection.sh` - Diagnóstico de Red y ROS2
+Script de diagnóstico completo que verifica:
+- Configuración ROS2 (variables de entorno)
+- Interfaces de red activas
+- Conectividad básica
+- Nodos, topics y servicios ROS2 activos
+- Estado del daemon ROS2
+- Diagnóstico DDS
+
+```bash
+./check_connection.sh
+```
+
+**Cuándo usar:**
+- Problemas de comunicación entre dispositivos
+- Verificar configuración antes de iniciar nodos
+- Debugging de problemas de red
+- Confirmar que todo está correctamente configurado
+
+#### `build_workspace.sh` - Compilar Workspace
+Compila todos los paquetes del workspace con opciones de limpieza:
+
+```bash
+./build_workspace.sh
+```
+
+El script:
+- Verifica que estés en el directorio correcto
+- Pregunta si deseas limpiar antes de compilar
+- Compila con `--symlink-install`
+- Muestra instrucciones post-compilación
+
+#### `clean_workspace.sh` - Limpiar Workspace
+Elimina los directorios `build/`, `install/` y `log/`:
+
+```bash
+./clean_workspace.sh
+```
+
+El script:
+- Muestra el tamaño de cada directorio antes de eliminar
+- Pide confirmación antes de proceder
+- Proporciona retroalimentación clara
+
+**Cuándo usar:**
+- Problemas de compilación
+- Cambios en configuración de paquetes
+- Resolver conflictos de build
+- Liberar espacio en disco
+
+### Flujo de Trabajo Típico
+
+#### Setup Inicial (WSL2 y Raspberry Pi):
+```bash
+# 1. Compilar workspace
+./build_workspace.sh
+
+# 2. Source del workspace
+source install/setup.bash
+
+# 3. Configurar CycloneDDS
+source setup_cyclonedds.sh
+
+# 4. Verificar configuración
+./check_connection.sh
+```
+
+#### En Raspberry Pi (Listener):
+```bash
+# Setup
+source install/setup.bash
+source setup_cyclonedds.sh
+
+# Ejecutar listener
+ros2 run wsl_raspi_comm listener
+```
+
+#### En WSL2 (Talker):
+```bash
+# Setup
+source install/setup.bash
+source setup_cyclonedds.sh
+
+# Ejecutar talker
+ros2 run wsl_raspi_comm talker
+```
+
+### Configuración CycloneDDS
+
+El archivo de configuración XML se encuentra en `config/cyclonedds.xml` y está optimizado para WSL2:
+
+```xml
+<Interfaces>
+    <NetworkInterface name="eth0" priority="10" />
+    <NetworkInterface name="wlan0" priority="5" />
+</Interfaces>
+```
+
+**Personalización:**
+- Edita `config/cyclonedds.xml` según tus necesidades
+- Ajusta las interfaces de red según tu configuración
+- Modifica el nivel de verbosidad para debugging
+
+**Para debugging:**
+Edita `config/cyclonedds.xml` y cambia:
+```xml
+<Verbosity>info</Verbosity>  <!-- Cambiar de 'warning' a 'info' -->
+```
+
+### Scripts en ~/.bashrc (Opcional)
+
+Para automatizar la configuración en cada terminal:
+
+```bash
+# Agregar a ~/.bashrc
+echo "source ~/ros2_ws/ros2_ws_wsl2_RasPI/install/setup.bash" >> ~/.bashrc
+echo "source ~/ros2_ws/ros2_ws_wsl2_RasPI/setup_cyclonedds.sh" >> ~/.bashrc
+```
+
+### Notas sobre CycloneDDS en WSL2
+
+El archivo de configuración `config/cyclonedds.xml` está optimizado para WSL2:
+- Usa `eth0` como interfaz principal (prioridad 10)
+- Evita `eth2` que puede causar problemas en WSL2
+- Fuerza IPv4 para mejor compatibilidad
+- Multicast habilitado para descubrimiento automático
+
+**Si experimentas problemas de descubrimiento:**
+1. Verifica las interfaces de red: `ip addr show`
+2. Ajusta `config/cyclonedds.xml` según tus interfaces
+3. Usa el diagnóstico: `./check_connection.sh`
+4. Aumenta verbosidad para debugging (ver sección anterior)
 
 ## Contacto
 

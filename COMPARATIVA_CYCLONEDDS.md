@@ -434,12 +434,19 @@ data_files=[
 1. ✅ Crear `setup_cyclonedds.sh` en el workspace
 2. ✅ Crear archivo `cyclonedds.xml` adaptado para WSL2
 3. ✅ Crear `check_connection.sh` para diagnósticos
-4. ✅ Actualizar README.md con instrucciones de uso
+4. ✅ Crear `setup_rmw.sh` para configuración fácil
+5. ✅ Crear `build_workspace.sh` para compilación automatizada
+6. ✅ Crear `clean_workspace.sh` para limpieza
+7. ✅ Actualizar README.md con instrucciones de uso
+
+**Estado: ✅ COMPLETADA**
 
 ### Fase 2: Automatización (30 min - 1 hora)
 1. ✅ Crear `build_workspace.sh`
 2. ✅ Crear script de limpieza `clean_workspace.sh`
 3. ✅ Documentar scripts en README
+
+**Estado: ✅ COMPLETADA**
 
 ### Fase 3: Launch Files (1-2 horas)
 1. ⏳ Crear directorio `src/wsl_raspi_comm/launch/`
