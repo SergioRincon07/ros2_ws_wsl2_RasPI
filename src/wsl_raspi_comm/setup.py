@@ -28,6 +28,8 @@ setup(
             'listener = wsl_raspi_comm.listener:main',
             'ping_node = wsl_raspi_comm.ping_node:main',
             'pong_node = wsl_raspi_comm.pong_node:main',
+            'service_server = wsl_raspi_comm.service_server:main',
+            'service_client = wsl_raspi_comm.service_client:main',
         ],
     },
 )

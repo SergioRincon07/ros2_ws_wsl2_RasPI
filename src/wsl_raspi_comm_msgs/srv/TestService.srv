@@ -1,0 +1,9 @@
+# Request
+string request_data
+int32 request_id
+---
+# Response
+bool success
+string response_data
+int32 processed_id
+float64 processing_time

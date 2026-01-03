@@ -71,7 +71,9 @@ Esto configura, entre otros:
 ---
 ## 4. Ejecutar nodos
 
-### 4.1.1 En WSL2 – Talker (Publisher)
+### 4.1 En WSL2 – Talker (Publisher - Subscriber)
+
+**WSL2 – Talker (Publisher)**
 
 ```bash
 cd ~/ros2_ws/ros2_ws_wsl2_RasPI
@@ -88,7 +90,7 @@ Salida esperada (ejemplo):
 ...
 ```
 
-### 4.1.2 En Raspberry Pi – Listener (Subscriber)
+**En Raspberry Pi – Listener (Subscriber)**
 
 ```bash
 cd ~/ros2_ws/ros2_ws_wsl2_RasPI
@@ -103,7 +105,7 @@ Tipo de mensaje: `std_msgs/msg/String`
 
 ---
 
-### 4.2.1 Prueba Bidireccional - Ping-Pong
+### 4.2 Prueba Bidireccional - Ping-Pong
 
 **En Linux: Ping**
 ```bash
@@ -121,6 +123,26 @@ source install/setup.bash
 source setup_cyclonedds.sh
 
 ros2 run wsl_raspi_comm pong_node
+```
+
+### 4.3 Prueba Server - Cliente
+
+**En Linux: Server**
+```bash
+cd ~/ros2_ws/ros2_ws_wsl2_RasPI
+source install/setup.bash
+source setup_cyclonedds.sh
+
+ros2 run wsl_raspi_comm service_server
+```
+
+**En Raspberry Pi: Cliente**
+```bash
+cd ~/ros2_ws/ros2_ws_wsl2_RasPI
+source install/setup.bash
+source setup_cyclonedds.sh
+
+ros2 run wsl_raspi_comm service_client
 ```
 
 ## 5. Configuración de red mínima

@@ -45,7 +45,7 @@ fi
 
 # Compilar
 echo -e "${BLUE}🔨 Compilando paquetes...${NC}"
-colcon build --symlink-install
+colcon build --packages-select wsl_raspi_comm wsl_raspi_comm_msgs --symlink-install
 
 # Verificar resultado
 if [ $? -eq 0 ]; then
