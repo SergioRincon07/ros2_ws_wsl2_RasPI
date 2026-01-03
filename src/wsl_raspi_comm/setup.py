@@ -26,6 +26,8 @@ setup(
         'console_scripts': [
             'talker = wsl_raspi_comm.talker:main',
             'listener = wsl_raspi_comm.listener:main',
+            'ping_node = wsl_raspi_comm.ping_node:main',
+            'pong_node = wsl_raspi_comm.pong_node:main',
         ],
     },
 )

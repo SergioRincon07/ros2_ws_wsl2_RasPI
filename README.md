@@ -65,13 +65,13 @@ echo "source ~/ros2_ws/ros2_ws_wsl2_RasPI/install/setup.bash" >> ~/.bashrc
 
 Esto configura, entre otros:
 - `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`
-- `CYCLONEDDS_URI` → `/home/sergio/ros2_ws/ros2_ws_wsl2_RasPI/config/cyclonedds.xml`
+- `CYCLONEDDS_URI` → `/home/sergio/ros2_ws/ros2_ws_wsl2_RasPI/config/cyclonedds_WSL.xml` o `/home/sergio/ros2_ws/ros2_ws_wsl2_RasPI/config/cyclonedds_RasPI.xml`
 - `ROS_DOMAIN_ID=10`
 
 ---
 ## 4. Ejecutar nodos
 
-### 4.1. En WSL2 – Talker (Publisher)
+### 4.1.1 En WSL2 – Talker (Publisher)
 
 ```bash
 cd ~/ros2_ws/ros2_ws_wsl2_RasPI
@@ -88,7 +88,7 @@ Salida esperada (ejemplo):
 ...
 ```
 
-### 4.2. En Raspberry Pi – Listener (Subscriber)
+### 4.1.2 En Raspberry Pi – Listener (Subscriber)
 
 ```bash
 cd ~/ros2_ws/ros2_ws_wsl2_RasPI
@@ -102,6 +102,27 @@ Topic usado: `/chatter`
 Tipo de mensaje: `std_msgs/msg/String`
 
 ---
+
+### 4.2.1 Prueba Bidireccional - Ping-Pong
+
+**En Linux: Ping**
+```bash
+cd ~/ros2_ws/ros2_ws_wsl2_RasPI
+source install/setup.bash
+source setup_cyclonedds.sh
+
+ros2 run wsl_raspi_comm ping_node
+```
+
+**En Raspberry Pi: Pong**
+```bash
+cd ~/ros2_ws/ros2_ws_wsl2_RasPI
+source install/setup.bash
+source setup_cyclonedds.sh
+
+ros2 run wsl_raspi_comm pong_node
+```
+
 ## 5. Configuración de red mínima
 
 En **ambos** dispositivos:
