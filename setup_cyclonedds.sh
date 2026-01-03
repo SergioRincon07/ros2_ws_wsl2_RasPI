@@ -5,15 +5,30 @@
 # Usar CycloneDDS (recomendado para multi-máquina)
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
-# Apuntar al archivo de configuración DDS
-# Primero intentar el archivo local del proyecto, luego el del home
-if [ -f "$HOME/ros2_ws/ros2_ws_wsl2_RasPI/config/cyclonedds.xml" ]; then
-    export CYCLONEDDS_URI=file://$HOME/ros2_ws/ros2_ws_wsl2_RasPI/config/cyclonedds.xml
-elif [ -f "$HOME/cyclonedds.xml" ]; then
-    export CYCLONEDDS_URI=file://$HOME/cyclonedds.xml
+# Detectar si estamos en WSL
+if grep -qi "microsoft" /proc/version 2>/dev/null \
+   || [ -n "$WSL_INTEROP" ] \
+   || [ -n "$WSL_DISTRO_NAME" ]; then
+    ENTORNO="WSL"
+    DDS_FILE="cyclonedds_WSL.xml"
 else
-    echo "⚠️  Advertencia: No se encontró archivo cyclonedds.xml"
-    echo "   El sistema usará configuración por defecto de CycloneDDS"
+    ENTORNO="Raspberry Pi"
+    DDS_FILE="cyclonedds_RasPI.xml"
+fi
+
+# Carpeta única de configuración
+CONFIG_DIR="$HOME/ros2_ws/ros2_ws_wsl2_RasPI/config"
+CONFIG_FILE="$CONFIG_DIR/$DDS_FILE"
+
+# Exportar configuración CycloneDDS
+if [ -f "$CONFIG_FILE" ]; then
+    export CYCLONEDDS_URI="file://$CONFIG_FILE"
+    echo "✅ CycloneDDS configurado para $ENTORNO"
+    echo "   Archivo: $CONFIG_FILE"
+else
+    echo "❌ ERROR: No se encontró $DDS_FILE"
+    echo "   Ruta esperada: $CONFIG_FILE"
+    echo "   CycloneDDS usará configuración por defecto"
 fi
 
 # Dominio ROS2 (debe ser el mismo en todos los dispositivos)
@@ -32,6 +47,7 @@ echo "=========================================="
 echo "  RMW: $RMW_IMPLEMENTATION"
 echo "  Dominio: $ROS_DOMAIN_ID"
 echo "  Config: ${CYCLONEDDS_URI:-'default'}"
+echo "  Entorno detectado: ${ENTORNO:-'desconocido'}"
 echo "  Discovery range: $ROS_AUTOMATIC_DISCOVERY_RANGE"
 echo "=========================================="
 echo ""
